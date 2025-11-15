@@ -1,0 +1,78 @@
+body {
+    background: #FFF7EE;
+    font-family: "Georgia", serif;
+}
+
+.menu_de_navegacion ul {
+    background: #F4A6B0;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    list-style:none;
+}
+
+.menu_de_navegacion ul li {
+    position: relative;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.menu_de_navegacion ul li ul {
+    display: none;
+    position: absolute;
+    background: white;
+    padding: 10px;
+    list-style:none;
+}
+
+.menu_de_navegacion ul li:hover ul {
+    display: block;
+}
+
+.contenedor {
+    width: 350px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #F4A6B0;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.boton {
+    display: block;
+    margin: 15px auto;
+    padding: 12px;
+    width: 80%;
+    background: #FFF3C0;
+    border-radius: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight:bold;
+}
+
+.form {
+    width: 350px;
+    background: #F4A6B0;
+    padding: 25px;
+    border-radius: 20px;
+    margin: 40px auto;
+}
+
+.form input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: none;
+}
+
+.form button {
+    background: #FFF3C0;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 90%;
+}
