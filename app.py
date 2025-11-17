@@ -2,7 +2,8 @@ from flask import Flask, request, render_template, redirect, session
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import random
-import requests
+import smtplib
+from email.mime.text import MIMEText
 
 # ------------------------------------
 # CONFIG GENERAL
@@ -25,36 +26,30 @@ def conectar_bd():
         print("Error BD:", e)
         return None
 
+
 # ------------------------------------
-# MAILTRAP API (FUNCIONANDO)
+# CONFIG SMTP GMAIL
 # ------------------------------------
-MAILTRAP_TOKEN = "4fc039135cd79ca0b5441f6f09ecc2cc"
+EMAIL_USER = "dessertsacre@gmail.com"       # <-- TU CORREO
+EMAIL_PASS = "utrehsexsumaxznm"          # <-- TU CONTRASEÑA DE APLICACIÓN
+
 
 def enviar_codigo(correo_destino, codigo):
-    url = "https://send.api.mailtrap.io/api/send"
-
-    headers = {
-        "Authorization": f"Bearer {MAILTRAP_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    data = {
-        "from": {"email": "hello@demomailtrap.co", "name": "Verificación"},
-        "to": [{"email": correo_destino}],
-        "subject": "Código de verificación",
-        "text": f"Tu código de verificación es: {codigo}",
-        "category": "Registro"
-    }
+    msg = MIMEText(f"Tu código de verificación es: {codigo}")
+    msg["Subject"] = "Código de verificación"
+    msg["From"] = EMAIL_USER
+    msg["To"] = correo_destino
 
     try:
-        r = requests.post(url, json=data, headers=headers)
-        print("Mailtrap:", r.status_code, r.text)
-
-        # Mailtrap responde 202 = OK ✔
-        return r.status_code in [200, 202]
+        with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+            smtp.starttls()
+            smtp.login(EMAIL_USER, EMAIL_PASS)
+            smtp.send_message(msg)
+            print("Correo enviado ✔")
+            return True
 
     except Exception as e:
-        print("Error enviando email:", e)
+        print("Error enviando correo:", e)
         return False
 
 
@@ -119,6 +114,10 @@ def verify():
         if codigo_ingresado == codigo_real:
             cursor.execute("UPDATE usuarios SET verificado=TRUE WHERE correo=%s", (correo,))
             conexion.commit()
+
+            cursor.close()
+            conexion.close()
+
             return redirect("/login")
         else:
             return "Código incorrecto"
