@@ -1,10 +1,12 @@
-from flask import Flask, request, render_template, redirect, session, url_for
+from flask import Flask, request, render_template, redirect, session
 import psycopg2
 from psycopg2.extras import RealDictCursor
-import smtplib
 import random
-import os
+import requests
 
+# ------------------------------------
+# CONFIG GENERAL
+# ------------------------------------
 app = Flask(__name__)
 app.secret_key = "clave_super_secreta"
 
@@ -23,38 +25,51 @@ def conectar_bd():
         print("Error BD:", e)
         return None
 
+# ------------------------------------
+# MAILTRAP API (FUNCIONANDO)
+# ------------------------------------
+MAILTRAP_TOKEN = "4fc039135cd79ca0b5441f6f09ecc2cc"
 
-# -----------------------------
-# ENVIAR CODIGO AL CORREO
-# -----------------------------
-def enviar_codigo(correo, codigo):
-    remitente = "tucorreo@gmail.com"
-    contraseña = "tu_contraseña_app"
+def enviar_codigo(correo_destino, codigo):
+    url = "https://send.api.mailtrap.io/api/send"
+
+    headers = {
+        "Authorization": f"Bearer {MAILTRAP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "from": {"email": "hello@demomailtrap.co", "name": "Verificación"},
+        "to": [{"email": correo_destino}],
+        "subject": "Código de verificación",
+        "text": f"Tu código de verificación es: {codigo}",
+        "category": "Registro"
+    }
 
     try:
-        servidor = smtplib.SMTP("smtp.gmail.com", 587)
-        servidor.starttls()
-        servidor.login(remitente, contraseña)
-        mensaje = f"Subject: Código de verificación\n\nTu código es: {codigo}"
-        servidor.sendmail(remitente, correo, mensaje)
-        servidor.quit()
-        print("Código enviado.")
-    except:
-        print("No se pudo enviar el correo.")
+        r = requests.post(url, json=data, headers=headers)
+        print("Mailtrap:", r.status_code, r.text)
+
+        # Mailtrap responde 202 = OK ✔
+        return r.status_code in [200, 202]
+
+    except Exception as e:
+        print("Error enviando email:", e)
+        return False
 
 
-# -----------------------------
-# PÁGINA PRINCIPAL
-# -----------------------------
+# ------------------------------------
+# INICIO
+# ------------------------------------
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-# -----------------------------
+# ------------------------------------
 # REGISTRO
-# -----------------------------
-@app.route("/register", methods=["GET","POST"])
+# ------------------------------------
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         nombre = request.form["nombre"]
@@ -64,17 +79,19 @@ def register():
         conexion = conectar_bd()
         cursor = conexion.cursor()
 
+        # GENERAR CÓDIGO
         codigo = str(random.randint(100000, 999999))
 
         cursor.execute("""
-            INSERT INTO usuarios (nombre, correo, password, codigo_verificacion)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO usuarios (nombre, correo, password, codigo_verificacion, verificado)
+            VALUES (%s, %s, %s, %s, FALSE)
         """, (nombre, correo, password, codigo))
 
         conexion.commit()
         cursor.close()
         conexion.close()
 
+        # ENVIAR CORREO ✔
         enviar_codigo(correo, codigo)
 
         session["correo_temp"] = correo
@@ -84,9 +101,9 @@ def register():
     return render_template("register.html")
 
 
-# -----------------------------
-# VERIFICAR CÓDIGO
-# -----------------------------
+# ------------------------------------
+# VERIFICAR
+# ------------------------------------
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
     if request.method == "POST":
@@ -97,9 +114,9 @@ def verify():
         cursor = conexion.cursor()
 
         cursor.execute("SELECT codigo_verificacion FROM usuarios WHERE correo=%s", (correo,))
-        correcto = cursor.fetchone()[0]
+        codigo_real = cursor.fetchone()[0]
 
-        if codigo_ingresado == correcto:
+        if codigo_ingresado == codigo_real:
             cursor.execute("UPDATE usuarios SET verificado=TRUE WHERE correo=%s", (correo,))
             conexion.commit()
             return redirect("/login")
@@ -109,10 +126,10 @@ def verify():
     return render_template("verify.html")
 
 
-# -----------------------------
+# ------------------------------------
 # LOGIN
-# -----------------------------
-@app.route("/login", methods=["GET","POST"])
+# ------------------------------------
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         correo = request.form["correo"]
@@ -136,25 +153,27 @@ def login():
     return render_template("login.html")
 
 
-# -----------------------------
-# DASHBOARD (PÁGINA PROTEGIDA)
-# -----------------------------
+# ------------------------------------
+# DASHBOARD
+# ------------------------------------
 @app.route("/dashboard")
 def dashboard():
     if not session.get("usuario"):
         return redirect("/login")
-
     return render_template("dashboard.html", usuario=session["usuario"])
 
 
-# -----------------------------
-# CERRAR SESIÓN
-# -----------------------------
+# ------------------------------------
+# LOGOUT
+# ------------------------------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
 
+# ------------------------------------
+# RUN
+# ------------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
