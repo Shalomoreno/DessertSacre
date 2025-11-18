@@ -4,6 +4,7 @@ from psycopg2.extras import RealDictCursor
 import random
 import smtplib
 from email.mime.text import MIMEText
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # ------------------------------------
 # CONFIG GENERAL
@@ -30,8 +31,8 @@ def conectar_bd():
 # ------------------------------------
 # CONFIG SMTP GMAIL
 # ------------------------------------
-EMAIL_USER = "dessertsacre@gmail.com"       # <-- TU CORREO
-EMAIL_PASS = "utrehsexsumaxznm"          # <-- TU CONTRASEÑA DE APLICACIÓN
+EMAIL_USER = "dessertsacre@gmail.com"
+EMAIL_PASS = "utrehsexsumaxznm"   # Contraseña de aplicación Gmail
 
 
 def enviar_codigo(correo_destino, codigo):
@@ -54,7 +55,7 @@ def enviar_codigo(correo_destino, codigo):
 
 
 # ------------------------------------
-# INICIO
+# INDEX
 # ------------------------------------
 @app.route("/")
 def index():
@@ -74,22 +75,32 @@ def register():
         conexion = conectar_bd()
         cursor = conexion.cursor()
 
-        # GENERAR CÓDIGO
+        # Validar correo existente
+        cursor.execute("SELECT id FROM usuarios WHERE correo=%s", (correo,))
+        if cursor.fetchone():
+            return "El correo ya está registrado"
+
+        # Encriptar contraseña
+        password_hash = generate_password_hash(password)
+
+        # Generar código
         codigo = str(random.randint(100000, 999999))
 
         cursor.execute("""
             INSERT INTO usuarios (nombre, correo, password, codigo_verificacion, verificado)
             VALUES (%s, %s, %s, %s, FALSE)
-        """, (nombre, correo, password, codigo))
+        """, (nombre, correo, password_hash, codigo))
 
         conexion.commit()
-        cursor.close()
-        conexion.close()
 
-        # ENVIAR CORREO ✔
+        # ENVIAR CÓDIGO
         enviar_codigo(correo, codigo)
 
+        # GUARDAR CORREO TEMPORAL EN SESIÓN
         session["correo_temp"] = correo
+
+        cursor.close()
+        conexion.close()
 
         return redirect("/verify")
 
@@ -97,22 +108,33 @@ def register():
 
 
 # ------------------------------------
-# VERIFICAR
+# VERIFICACIÓN
 # ------------------------------------
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
+    correo = session.get("correo_temp")
+
+    if not correo:
+        return redirect("/register")
+
     if request.method == "POST":
         codigo_ingresado = request.form["codigo"]
-        correo = session.get("correo_temp")
 
         conexion = conectar_bd()
         cursor = conexion.cursor()
 
         cursor.execute("SELECT codigo_verificacion FROM usuarios WHERE correo=%s", (correo,))
-        codigo_real = cursor.fetchone()[0]
+        result = cursor.fetchone()
+
+        if not result:
+            return "Error interno."
+
+        codigo_real = result[0]
 
         if codigo_ingresado == codigo_real:
-            cursor.execute("UPDATE usuarios SET verificado=TRUE WHERE correo=%s", (correo,))
+            cursor.execute("""
+                UPDATE usuarios SET verificado=TRUE WHERE correo=%s
+            """, (correo,))
             conexion.commit()
 
             cursor.close()
@@ -120,7 +142,7 @@ def verify():
 
             return redirect("/login")
         else:
-            return "Código incorrecto"
+            return "Código incorrecto ❌"
 
     return render_template("verify.html")
 
@@ -137,17 +159,21 @@ def login():
         conexion = conectar_bd()
         cursor = conexion.cursor(cursor_factory=RealDictCursor)
 
-        cursor.execute("SELECT * FROM usuarios WHERE correo=%s AND password=%s", (correo, password))
+        cursor.execute("SELECT * FROM usuarios WHERE correo=%s", (correo,))
         usuario = cursor.fetchone()
 
-        if usuario:
-            if usuario["verificado"]:
-                session["usuario"] = usuario["nombre"]
-                return redirect("/dashboard")
-            else:
-                return "Debes verificar tu correo antes de iniciar sesión"
-        else:
-            return "Credenciales incorrectas"
+        if not usuario:
+            return "Correo o contraseña incorrectos"
+
+        # Comparar contraseña encriptada
+        if not check_password_hash(usuario["password"], password):
+            return "Correo o contraseña incorrectos"
+
+        if not usuario["verificado"]:
+            return "Debes verificar tu correo antes de iniciar sesión"
+
+        session["usuario"] = usuario["nombre"]
+        return redirect("/dashboard")
 
     return render_template("login.html")
 
