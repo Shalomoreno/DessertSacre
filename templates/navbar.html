@@ -1,31 +1,45 @@
 <div class="menu_de_navegacion">
     <ul>
         <li>Inicio
-            <ul>
-                <li>Historia</li>
-            </ul>
+            <a href="{{ url_for('inicio') }}"></a>
         </li>
-
         <li>Menu
+            <a href="{{ url_for('menu') }}"></a>
+        </li>
+        <li>Sobre Nosotros
             <ul>
-                <li>Donde nos encuentras</li>
-                <li>Mapa</li>
+                <li>Historia
+                    <a href="{{ url_for('historia') }}"></a>   
+                </li>
+                <li>Equipo
+                    <a href="{{ url_for('equipo') }}"></a>   
+                </li>
             </ul>
         </li>
-
-        <li>Nuestros Productos
-            <ul>
-                <li>Productos</li>
-                <li>Servicios</li>
-            </ul>
-        </li>
-
         <li>Contáctanos
             <ul>
-                <li>Redes Sociales</li>
+                <li>Redes Sociales
+                    <a href="{{ url_for('redes') }}"></a>
+                </li>
+                <li>Ubicación
+                    <a href="{{ url_for('ubicacion') }}"></a> 
+                </li>
             </ul>
         </li>
 
-        <li>Carrito de Compras</li>
+        </li>
+        <li> Tu Cuenta
+            <ul>
+                <li>Perfil
+                    <a href="{{ url_for('perfil') }}"></a>
+                </li>
+                <li>Pedidos
+                    <a href="{{ url_for('pedidos') }}"></a>
+                </li>
+                <li>Cerrar Sesión
+                    <a href="{{ url_for('cerrar_sesion') }}"></a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </div>

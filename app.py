@@ -196,6 +196,48 @@ def logout():
     session.clear()
     return redirect("/")
 
+# ------------------------------------
+# NAVBAR
+# ------------------------------------
+
+@app.route('/')
+def inicio():
+    return render_template('inicio.html')
+
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
+
+@app.route('/historia')
+def historia():
+    return render_template('historia.html')
+
+@app.route('/equipo')
+def equipo():
+    return render_template('equipo.html')
+
+@app.route('/redes')
+def redes():
+    return render_template('redes.html')
+
+@app.route('/ubicacion')
+def ubicacion():
+    return render_template('ubicacion.html')
+
+# rutas de cuenta
+@app.route('/perfil')
+def perfil():
+    return render_template('perfil.html')
+
+@app.route('/pedidos')
+def pedidos():
+    return render_template('pedidos.html')
+
+@app.route('/cerrar_sesion')
+def cerrar_sesion():
+    # lógica de logout
+    return "Sesión cerrada", 200
+
 
 # ------------------------------------
 # RUN
