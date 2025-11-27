@@ -200,7 +200,7 @@ def logout():
 # NAVBAR
 # ------------------------------------
 
-@app.route('/')
+@app.route('/inicio')
 def inicio():
     return render_template('inicio.html')
 
