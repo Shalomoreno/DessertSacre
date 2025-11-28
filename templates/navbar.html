@@ -1,25 +1,83 @@
-<div class="menu_de_navegacion">
-  <ul>
-    <li><a href="{{ url_for('inicio') }}">Inicio</a></li>
-    <li><a href="{{ url_for('menu') }}">Menú</a></li>
-    <li>Sobre Nosotros
-      <ul>
-        <li><a href="{{ url_for('historia') }}">Historia</a></li>
-        <li><a href="{{ url_for('equipo') }}">Equipo</a></li>
-      </ul>
-    </li>
-    <li>Contáctanos
-      <ul>
-        <li><a href="{{ url_for('redes') }}">Redes Sociales</a></li>
-        <li><a href="{{ url_for('ubicacion') }}">Ubicación</a></li>
-      </ul>
-    </li>
-    <li>Tu Cuenta
-      <ul>
-        <li><a href="{{ url_for('perfil') }}">Perfil</a></li>
-        <li><a href="{{ url_for('pedidos') }}">Pedidos</a></li>
-        <li><a href="{{ url_for('cerrar_sesion') }}">Cerrar Sesión</a></li>
-      </ul>
-    </li>
-  </ul>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="/static/styles/style.css">
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="90" tabindex="0">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <nav id="navbar-example2" class="navbar navbar-expand-lg navbar bg fixed-top">
+    <a class="navbar-brand" href="#">ㅤㅤㅤ<img src="/static/img/LOGO1.png" weight="50px" height="50px">ㅤㅤㅤㅤㅤDessert
+      Sacré</a>
+    <ul class="navbar-nav mx-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('inicio') }}">Inicio</a>
+      </li>
+
+      <p>ㅤㅤ</p>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('menu') }}">Menú</a>
+      </li>
+      
+      <p>ㅤㅤ</p>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{{ url_for('sobrenosotros') }}"
+          role="button" aria-expanded="false">Sobre Nosotros</a>
+
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{{ url_for('sobrenosotros') }}#Historia">Historia</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('sobrenosotros') }}#Equipo">Equipo</a></li>
+        </ul>
+      </li>
+
+      <p>ㅤㅤ</p>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"
+          href="{{ url_for('redes') }}">Contáctanos</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{{ url_for('redes') }}">Redes Sociales</a></li>
+          <li><a class="dropdown-item" href="#Ubicacion">Ubicación</a></li>
+        </ul>
+      </li>
+
+      <p>ㅤㅤ</p>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"
+          href="#Tu_Cuenta">Tu Cuenta</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{{ url_for('perfil') }}">Perfil</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('pedidos') }}">Pedidos</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('cerrar_sesion') }}">Cerrar Sesión</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%"
+    data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+
+  </div>
+
+  <script>
+    document.querySelectorAll('.nav-item.dropdown > a.nav-link').forEach(link => {
+      link.addEventListener('click', function (e) {
+        if (!this.classList.contains('show')) {
+          // Si el menú no está desplegado, navegar a la ruta
+          window.location = this.getAttribute('href');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

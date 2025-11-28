@@ -1,10 +1,11 @@
 body {
     background: #FFF7EE;
     font-family: "Georgia", serif;
+    padding-top: 45px;
 }
 
 .menu_de_navegacion ul {
-    background: #F4A6B0;
+    background: #f1c5c2;
     padding: 15px;
     display: flex;
     justify-content: center;
@@ -34,7 +35,7 @@ body {
     width: 350px;
     margin: 50px auto;
     padding: 30px;
-    background: #F4A6B0;
+    background: #f1c5c2;
     border-radius: 20px;
     text-align: center;
 }
@@ -53,7 +54,7 @@ body {
 
 .form {
     width: 350px;
-    background: #F4A6B0;
+    background: #f1c5c2;
     padding: 25px;
     border-radius: 20px;
     margin: 40px auto;
@@ -77,3 +78,58 @@ body {
     width: 90%;
 }
 
+nav {
+    background-color: #f1c5c2 !important;
+}
+
+.navbar-brand {
+    color: #b2636c  !important;
+}
+
+.navbar-brand:hover {
+    color: #b2636c  !important;
+}
+
+a.nav-link {
+    color: #f18686 ;
+}
+
+a.nav-link:hover {
+    color: #b2636c ;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.dropdown-menu {
+    background-color: #f1c5c2;
+}
+
+.dropdown-item {
+    color: #f18686;
+}
+
+.dropdown-item:hover {
+    background-color:transparent !important;
+    color: #b2636c;
+}
+
+.nav-link.dropdown-toggle {
+  color: #f18686;
+}
+
+
+.nav-link.dropdown-toggle {
+  color: #f18686 !important;
+}
+
+.nav-link.dropdown-toggle:hover {
+    background-color: transparent;
+  color: #b2636c !important; 
+}

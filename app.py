@@ -208,21 +208,14 @@ def inicio():
 def menu():
     return render_template('menu.html')
 
-@app.route('/historia')
-def historia():
-    return render_template('historia.html')
+@app.route('/sobrenosotros')
+def sobrenosotros():
+    return render_template('sobrenosotros.html')
 
-@app.route('/equipo')
-def equipo():
-    return render_template('equipo.html')
 
 @app.route('/redes')
 def redes():
     return render_template('redes.html')
-
-@app.route('/ubicacion')
-def ubicacion():
-    return render_template('ubicacion.html')
 
 # rutas de cuenta
 @app.route('/perfil')
