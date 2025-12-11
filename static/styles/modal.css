@@ -1,0 +1,148 @@
+/*<style>
+    /* Fondo oscurecido */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Caja del modal */
+.modal-box {
+    background: #f8c5c5;
+    /* suave parecido al de tu tarjeta */
+    padding: 30px;
+    width: 380px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    border: 2px solid #b2636c;
+    animation: pop 0.25s ease;
+}
+
+/* Logo pequeño */
+.logo-modal {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+/* Título */
+.titulo-modal {
+    font-size: 22px;
+    color: #b2636c;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Contenedor de botones */
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Botones estilo tu página */
+.btn-modal {
+    padding: 12px;
+    border-radius: 20px;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+/* Botón principal (amarillo suave) */
+.principal {
+    background: #ffeaa7;
+    color: #000;
+    border: 2px solid #b2636c;
+}
+
+.principal:hover {
+    background: #ffdf85;
+}
+
+/* Botón secundario (rosa oscuro) */
+.secundario {
+    background: #b2636c;
+    color: white;
+}
+
+.secundario:hover {
+    background: #954d55;
+}
+
+/* Opción "Más tarde" */
+.later {
+    background: transparent;
+    color: #b2636c;
+    border: none;
+}
+
+.later:hover {
+    opacity: 0.6;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+</style> {
+    % if mostrar_modal %
+}
+
+<div id="loginModal" class="modal"><div class="modal-content"><h2>¡Antes de continuar !</h2><p>Debes iniciar sesión para acceder a esta parte del sitio.</p><div class="buttons"><a href="/login" class="btn login">Iniciar sesión</a><button class="btn later" onclick="cerrarModal()">Más tarde</button></div></div></div> {
+    % endif %
+}
+
+<script>function cerrarModal() {
+    document.getElementById("loginModal").style.display="none";
+
+    // Opcional: no mostrar otra vez durante 1 hora
+    localStorage.setItem("ignorarLogin", Date.now());
+}
+
+</script><script>window.onload=function () {
+    const ignorar=localStorage.getItem("ignorarLogin");
+
+    if (ignorar) {
+        const haceCuanto=Date.now() - parseInt(ignorar);
+
+        if (haceCuanto < 3600000) {
+            // 1 hora
+            const modal=document.getElementById("loginModal");
+            if (modal) modal.style.display="none";
+        }
+    }
+}
+
+;
+</script>*/

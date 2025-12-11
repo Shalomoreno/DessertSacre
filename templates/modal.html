@@ -1,0 +1,38 @@
+<!--{% if mostrar_modal %}
+<div id="loginModal" class="modal">
+    <div class="modal-box">
+        <img src="/static/img/LOGO.png" class="logo-modal">
+
+        <h2 class="titulo-modal">¡Antes de continuar!</h2>
+        <p>Debes iniciar sesión para acceder a esta parte del sitio.</p>
+
+        <div class="btn-group">
+            <a href="/login" class="btn-modal principal" onclick="redirigirLogin(event)">Iniciar sesión</a>
+            <button class="btn-modal secundario" onclick="cerrarModal()">Más tarde</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cerrarModal() {
+        document.getElementById("loginModal").style.display = "none";
+    }
+</script>
+<script>
+function redirigirLogin(e) {
+    e.preventDefault();  // Evita que el enlace cambie de página de inmediato
+
+    cerrarModal();       // Cierra el modal visualmente
+
+    setTimeout(() => {
+        window.location.href = "/login";   // Redirige después de cerrar
+    }, 150); // tiempo pequeño para que el cierre se note
+}
+
+function cerrarModal() {
+    document.getElementById("loginModal").style.display = "none";
+} 
+</script>
+
+
+{% endif %}-->

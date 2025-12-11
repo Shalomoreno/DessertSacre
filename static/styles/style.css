@@ -1,7 +1,7 @@
 body {
     background: #FFF7EE;
     font-family: "Georgia", serif;
-    padding-top: 45px;
+    padding-top: 24px;
 }
 
 .menu_de_navegacion ul {
@@ -132,4 +132,69 @@ body {
 .nav-link.dropdown-toggle:hover {
     background-color: transparent;
   color: #b2636c !important; 
+}
+
+/* FONDO DEL MODAL */
+.modal {
+    display: block; /* Flask lo puede manejar cambiando el display */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* CAJA DEL MODAL */
+.modal-box {
+    background: #fff;
+    padding: 25px;
+    width: 350px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+/* BOTONES */
+.btn-modal {
+    padding: 10px 15px;
+    margin: 10px 5px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-modal.principal {
+    background: #f1c5c2;
+    color: #000;
+}
+
+.btn-modal.secundario {
+    background: #FFF3C0;
+    color: #000;
+}
+
+.logo-modal {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+.logo-superpuesto {
+    position: absolute;
+    top: 0px;        /* Ajusta verticalmente */
+    left: 30px;      /* Ajusta horizontalmente */
+    height: 40px;    /* Tamaño que necesitas */
+    width: auto;
+    z-index: 9999;   /* Encima del navbar */
+    pointer-events: none; /* Para que no afecte clics */
+}
+
+.navbar-brand {
+    position: relative; /* Necesario para referenciar el absolute del logo */
+    padding-left: 60px; /* Deja espacio para el texto */
 }

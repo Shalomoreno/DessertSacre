@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, session
+from flask import Flask, request, render_template, redirect, session, flash
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import random
@@ -67,6 +67,10 @@ def index():
 # ------------------------------------
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    
+    session.pop("intentos_reenvio", None)   # Reiniciar
+    session.pop("correo_verificacion", None)
+    
     if request.method == "POST":
         nombre = request.form["nombre"]
         correo = request.form["correo"]
@@ -97,7 +101,7 @@ def register():
         enviar_codigo(correo, codigo)
 
         # GUARDAR CORREO TEMPORAL EN SESIÓN
-        session["correo_temp"] = correo
+        session["correo_verificacion"] = correo
 
         cursor.close()
         conexion.close()
@@ -112,10 +116,15 @@ def register():
 # ------------------------------------
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
-    correo = session.get("correo_temp")
+
+    correo = session.get("correo_verificacion")
 
     if not correo:
-        return redirect("/register")
+        flash("No hay correo para verificar", "danger")
+        return redirect("/login")
+
+    # PASAR LOS INTENTOS A LA PLANTILLA
+    intentos = session.get("intentos_reenvio", 0)
 
     if request.method == "POST":
         codigo_ingresado = request.form["codigo"]
@@ -127,24 +136,68 @@ def verify():
         result = cursor.fetchone()
 
         if not result:
-            return "Error interno."
+            flash("Error interno.", "danger")
+            return render_template("verify.html", redirect_login=False, intentos=intentos)
 
         codigo_real = result[0]
 
         if codigo_ingresado == codigo_real:
-            cursor.execute("""
-                UPDATE usuarios SET verificado=TRUE WHERE correo=%s
-            """, (correo,))
+            cursor.execute("UPDATE usuarios SET verificado=TRUE WHERE correo=%s", (correo,))
             conexion.commit()
-
             cursor.close()
             conexion.close()
 
-            return redirect("/login")
-        else:
-            return "Código incorrecto ❌"
+            flash("Correo verificado con éxito", "success")
+            session.pop("correo_verificacion", None)
+            session.pop("intentos_reenvio", None)
+            
+            return render_template("verify.html", redirect_login=True, intentos=intentos)
 
-    return render_template("verify.html")
+        
+        flash("El código ingresado es incorrecto", "danger")
+        return render_template("verify.html", redirect_login=False, intentos=intentos)
+
+    return render_template("verify.html", redirect_login=False, intentos=intentos)
+
+
+#------------------------------------
+# REENVÍO DE CÓDIGO
+#------------------------------------
+@app.route("/reenviar_codigo")
+def reenviar_codigo():
+    correo = session.get("correo_verificacion")
+
+    if not correo:
+        flash("No hay correo para verificar", "danger")
+        return redirect("/login")
+
+    # Contador de reenvíos
+    intentos = session.get("intentos_reenvio", 0)
+
+    if intentos >= 3:
+        flash("Límite de reenvíos alcanzado. Verifica tu correo o regístrate de nuevo.", "warning")
+        return redirect("/verify")
+
+    # Generar y guardar nuevo código
+    nuevo_codigo = str(random.randint(100000, 999999))
+
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+    cursor.execute("UPDATE usuarios SET codigo_verificacion=%s WHERE correo=%s",
+                   (nuevo_codigo, correo))
+    conexion.commit()
+    cursor.close()
+    conexion.close()
+
+    # Aumentar contador
+    session["intentos_reenvio"] = intentos + 1
+
+    # Enviar código
+    enviar_codigo(correo, nuevo_codigo)
+
+    flash("Código reenviado. Revisa tu correo.", "success")
+    return redirect("/verify")
+
 
 
 # ------------------------------------
@@ -163,19 +216,27 @@ def login():
         usuario = cursor.fetchone()
 
         if not usuario:
-            return "Correo o contraseña incorrectos"
+            flash("Correo o contraseña incorrectos", "danger")
+            return redirect("/login")
 
-        # Comparar contraseña encriptada
         if not check_password_hash(usuario["password"], password):
-            return "Correo o contraseña incorrectos"
+            flash("Correo o contraseña incorrectos", "danger")
+            return redirect("/login")
 
         if not usuario["verificado"]:
-            return "Debes verificar tu correo antes de iniciar sesión"
+            session["correo_verificacion"] = correo
+            session["redir_verificar"] = True
+            flash("Debes verificar tu correo antes de iniciar sesión", "warning")
+            return redirect("/verify")
 
         session["usuario"] = usuario["nombre"]
-        return redirect("/dashboard")
-
-    return render_template("login.html")
+        flash("Inicio de sesión exitoso", "success")
+        return render_template("login.html", redirect_dashboard=True)
+    
+    # Limpia el redirect cuando se carga el login
+        
+    redir_verificar = session.pop("redir_verificar", None)
+    return render_template("login.html", redir_verificar=redir_verificar)
 
 
 # ------------------------------------
@@ -217,6 +278,7 @@ def sobrenosotros():
 def redes():
     return render_template('redes.html')
 
+
 # rutas de cuenta
 @app.route('/perfil')
 def perfil():
@@ -230,6 +292,134 @@ def pedidos():
 def cerrar_sesion():
     # lógica de logout
     return "Sesión cerrada", 200
+
+# ------------------------------------
+# OLVIDO SU CONTRASEÑA?
+# ------------------------------------
+#Ruta para solicitar la recuperación
+
+@app.route("/forgot", methods=["GET", "POST"])
+def forgot():
+    if request.method == "POST":
+        correo = request.form["correo"]
+        
+        if not correo:
+            flash("Por favor ingresa un correo.", "warning")
+            return redirect("/forgot")
+        
+        conexion = conectar_bd()
+        cursor = conexion.cursor()
+
+        cursor.execute("SELECT id FROM usuarios WHERE correo=%s", (correo,))
+        usuario = cursor.fetchone()
+
+        if not usuario:
+            flash("El correo ingresado no existe ❌", "danger")
+            session["redir_register"] = True  
+            return redirect("/forgot")
+
+        # Generar código de recuperación
+        codigo = str(random.randint(100000, 999999))
+
+        cursor.execute("""
+            UPDATE usuarios
+            SET codigo_verificacion = %s
+            WHERE correo = %s
+        """, (codigo, correo))
+
+        conexion.commit()
+        conexion.close()
+
+        enviar_codigo(correo, codigo)
+        
+        flash("Código enviado a tu correo 📩", "success")
+        session["correo_recuperar"] = correo
+
+        return redirect("/reset-code")
+    
+    # Limpia el redirect cuando se carga el forgot
+    redir_register = session.pop("redir_register", None)
+
+    return render_template("forgot.html", redir_register=redir_register)
+
+#Crear vista para ingresar el código
+@app.route("/reset-code", methods=["GET", "POST"])
+def reset_code():
+    correo = session.get("correo_recuperar")
+    if not correo:
+        flash("Primero ingresa tu correo", "warning")
+        return redirect("/forgot")
+
+    if request.method == "POST":
+        codigo_ingresado = request.form["codigo"]
+
+        conexion = conectar_bd()
+        cursor = conexion.cursor()
+
+        cursor.execute("SELECT codigo_verificacion FROM usuarios WHERE correo=%s", (correo,))
+        codigo_real = cursor.fetchone()[0]
+
+        if codigo_ingresado == codigo_real:
+            flash("Código correcto ✔", "success")
+            return redirect("/reset-password")
+
+        flash("Código incorrecto ❌", "danger")
+        return "Código incorrecto"
+
+    return render_template("reset_code.html")
+
+#Ruta para cambiar la contraseña
+@app.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+    correo = session.get("correo_recuperar")
+    if not correo:
+        flash("Primero ingresa tu correo", "warning")
+        return redirect("/forgot")
+
+    if request.method == "POST":
+        new_password = request.form["password"]
+        password_hash = generate_password_hash(new_password)
+
+        conexion = conectar_bd()
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            UPDATE usuarios SET password=%s WHERE correo=%s
+        """, (password_hash, correo))
+
+        conexion.commit()
+        conexion.close()
+
+        session.pop("correo_recuperar", None)
+
+        flash("Contraseña cambiada correctamente ✔", "success")
+        return redirect("/login")
+
+    return render_template("reset_password.html")
+
+# ------------------------------------
+# DETECTAR EL LOGIN
+# ------------------------------------
+# @app.route("/zona_protegida")
+# def zona_protegida():
+#     if not session.get("usuario") and not session.get("modal_cerrado"):
+#         return render_template("zona_protegida.html", mostrar_modal=True)
+#     return render_template("zona_protegida.html", mostrar_modal=False)
+
+
+# @app.context_processor
+# def inject_modal_flag():
+#     mostrar_modal = (
+#         not session.get("usuario")
+#         and not session.get("modal_cerrado")
+#     )
+#     return dict(mostrar_modal=mostrar_modal)
+
+
+# @app.route("/cerrar-modal")
+# def cerrar_modal():
+#     session["modal_cerrado"] = True
+#     return "", 204
 
 
 # ------------------------------------

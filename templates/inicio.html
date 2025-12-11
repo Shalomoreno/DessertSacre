@@ -2,32 +2,194 @@
 <html lang="es">
 
 <head>
-    <link rel="stylesheet" href="/static/styles/style.css">
- 
+  <link rel="stylesheet" href="/static/styles/style.css">
+  <style>
+
+    video {
+        width: 100%;
+    }
+
+    .VideoInicio {
+    width: 100%;
+    height: 300px;       
+    overflow: hidden;
+    position: relative;
+    }
+
+    .VideoInicio video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;   
+        object-position: center center; 
+        display: block;
+    }
+
+    .CapaInicio {
+        position: absolute;
+        top: 150px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        text-align: center;
+    }
+  :root{
+    --pink:#f4c7c4;
+    --rose:#c86a6b;
+    --beige:#f6e2c9;
+    --accent:#d99b4d;
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+
+  /* Contenedor general */
+  
+  .hero{
+    display:grid;
+    grid-template-columns: 1fr 420px; /* izquierda flexible, derecha fija */
+    gap: 32px;
+    align-items: stretch;
+    padding: 48px 64px;
+    background: white;
+  }
+
+  /* columna izquierda: texto */
+  .hero-left{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    position:relative;
+  }
+
+  .text-wrap{
+    max-width: 700px;
+    width:100%;
+    padding-left: 12px;
+  }
+
+  .subtitle{
+    font-family: "Montserrat", sans-serif;
+    color:var(--rose);
+    letter-spacing:4px;
+    text-transform:none;
+    margin:0 0 18px 0;
+    font-size:14px;
+    font-weight:300;
+  }
+
+  /* Recuadro beige detrás de las líneas centrales */
+  .highlight{
+    display:inline-block;
+    background:var(--beige);
+    padding: 28px 36px;
+    margin-bottom: 18px;
+  }
+
+  /* H1 con líneas grandes */
+  .hero-title{
+    margin:0;
+    font-family: "Playfair Display", serif;
+    font-weight:700;
+    color:var(--accent);
+    text-transform:uppercase;
+    font-size:46px;             /* ajústalo para escala */
+    letter-spacing:6px;
+    line-height:1;
+  }
+
+  /* Línea que va encima y debajo del recuadro */
+  .hero-title .line-top,
+  .hero-title .line-bottom{
+    display:block;
+    font-size:56px;
+  }
+
+  /* Línea GLORIOSO con letras separadas */
+  .spaced{
+    display:block;
+    font-size:48px;
+    color:var(--rose);
+    letter-spacing:2px;   /* separación entre letras (ajusta) */
+    margin: 10px 0;
+    font-weight:600;
+  }
+
+  /* Texto descriptivo pequeño */
+  .desc{
+    margin-top:16px;
+    color:#9b6f6f;
+    font-size:14px;
+    max-width:520px;
+    line-height:1.6;
+  }
+
+  /* columna derecha: imagen */
+  .hero-right{
+    overflow:hidden;
+    border-radius:2px;
+    display:block;
+    align-self:stretch;
+  }
+
+  .hero-right img{
+    width:100%;
+    height:100%;
+    min-height:320px;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* responsive: 1 columna en pantallas pequeñas */
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr; padding:32px;}
+    .hero-right{order:2; height:260px;}
+    .hero-left{order:1; padding-bottom:20px;}
+    .hero-title{font-size:44px}
+    .spaced{font-size:36px; letter-spacing:28px}
+  }
+
+  @media (max-width:520px){
+    .highlight{padding:18px 22px}
+    .hero-title{font-size:34px}
+    .spaced{font-size:28px; letter-spacing:14px}
+    .hero-right{height:200px}
+    .hero{padding:18px}
+  }
+
+   </style>
 </head>
 
 <body>
     {% include 'navbar.html' %}
     <div >
         <div class="VideoInicio">
-            <video autoplay muted loop>
-                <source src="/static/img/video.mp4" type="video/mp4">
+            <video autoplay muted loop src="/static/vid/Contactanos!.mp4">
             </video>
         </div>
-        <div class="CapaInicio">
-            <div class="Texto inicio">
-                <p>Bienvenidos a Dessert Sacré</p>
-                <h2> EL SABOR </h2>
-                <h2> GLORIOSO</h2>
-                <h2> EN UN </h2>
-                <h2> BOCADO </h2>
-                <p> Donde el Pecado se Funde en Nuestros Glaseados </p>
+        <section class="hero" aria-label="Hero - Dessert Sacré">
+            <div class="hero-left">
+                <div class="text-wrap">
+                    <p class="subtitle">Bienvenidos a Dessert Sacré</p>
+                    <div class="highlight" aria-hidden="true">
+                        <h1 class="hero-title" aria-hidden="true">
+                            <span class="line-top">EL SABOR</span>
+                            <span class="spaced">G L O R I O S O</span>
+                            <span class="line-bottom">EN UN</span>
+                        </h1>
+                    </div>
+                    <h1 class="hero-title" style="color:var(--rose); font-size:56px; margin-top:6px;">BOCADO</h1>
+                    <p class="desc">Donde el Pecado se Funde en Nuestros Glaseados</p>
+                </div>
             </div>
-            <div class="Foto inicio">
-                <img src="..." alt="Imagen de inicio">
+            <div class="hero-right">
+                <img src="..." alt="Postres con frambuesas">
             </div>
-        </div>
-    </div>
+        </section>
+    
 </body>
 
 </html>
