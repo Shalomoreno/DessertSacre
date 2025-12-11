@@ -67,10 +67,10 @@ def index():
 # ------------------------------------
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    
-    session.pop("intentos_reenvio", None)   # Reiniciar
+    # Reiniciar sesiones temporales
+    session.pop("intentos_reenvio", None)
     session.pop("correo_verificacion", None)
-    
+
     if request.method == "POST":
         nombre = request.form["nombre"]
         correo = request.form["correo"]
@@ -79,10 +79,13 @@ def register():
         conexion = conectar_bd()
         cursor = conexion.cursor()
 
-        # Validar correo existente
+        # Validar si el correo ya existe
         cursor.execute("SELECT id FROM usuarios WHERE correo=%s", (correo,))
         if cursor.fetchone():
-            return "El correo ya está registrado"
+            flash("El correo ya está registrado. Inicia sesión.", "warning")
+            # Guardar correo en sesión para ayudar al usuario en login
+            session["correo_login_auto"] = correo
+            return redirect("/login")
 
         # Encriptar contraseña
         password_hash = generate_password_hash(password)
@@ -100,15 +103,17 @@ def register():
         # ENVIAR CÓDIGO
         enviar_codigo(correo, codigo)
 
-        # GUARDAR CORREO TEMPORAL EN SESIÓN
+        # Guardar correo temporal para verify
         session["correo_verificacion"] = correo
 
         cursor.close()
         conexion.close()
 
+        flash("Registro exitoso. Revisa tu correo para verificar la cuenta", "success")
         return redirect("/verify")
 
     return render_template("register.html")
+
 
 
 # ------------------------------------
@@ -150,8 +155,9 @@ def verify():
             flash("Correo verificado con éxito", "success")
             session.pop("correo_verificacion", None)
             session.pop("intentos_reenvio", None)
-            
-            return render_template("verify.html", redirect_login=True, intentos=intentos)
+
+            return redirect("/login")
+
 
         
         flash("El código ingresado es incorrecto", "danger")
@@ -236,8 +242,10 @@ def login():
     # Limpia el redirect cuando se carga el login
         
     redir_verificar = session.pop("redir_verificar", None)
-    return render_template("login.html", redir_verificar=redir_verificar)
+    
+    correo_auto = session.pop("correo_login_auto", "")
 
+    return render_template("login.html", redir_verificar=redir_verificar, correo_auto=correo_auto)
 
 # ------------------------------------
 # DASHBOARD
@@ -364,7 +372,7 @@ def reset_code():
             return redirect("/reset-password")
 
         flash("Código incorrecto ❌", "danger")
-        return "Código incorrecto"
+        return redirect("/reset-code")
 
     return render_template("reset_code.html")
 
