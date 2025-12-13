@@ -36,6 +36,7 @@
         color: white;
         text-align: center;
     }
+
   :root{
     --pink:#f4c7c4;
     --rose:#c86a6b;
@@ -46,24 +47,29 @@
   *{box-sizing:border-box}
   body{margin:0;font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
 
-  /* Contenedor general */
-  
-  .hero{
+  .columna{
     display:grid;
-    grid-template-columns: 1fr 420px; /* izquierda flexible, derecha fija */
+    grid-template-columns: 1fr 420px;
     gap: 32px;
     align-items: stretch;
     padding: 48px 64px;
     background: white;
   }
 
-  /* columna izquierda: texto */
-  .hero-left{
+  .columna-left{
     display:flex;
     align-items:center;
     justify-content:flex-start;
     position:relative;
   }
+
+  .center-block{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+    text-align: center;    
+}
 
   .text-wrap{
     max-width: 700px;
@@ -75,59 +81,54 @@
     font-family: "Montserrat", sans-serif;
     color:var(--rose);
     letter-spacing:4px;
-    text-transform:none;
     margin:0 0 18px 0;
     font-size:14px;
     font-weight:300;
   }
 
-  /* Recuadro beige detrás de las líneas centrales */
-  .highlight{
+  .recuadro{
     display:inline-block;
     background:var(--beige);
-    padding: 28px 36px;
+    text-align: center;
+    padding: 36px 36px;
     margin-bottom: 18px;
   }
 
-  /* H1 con líneas grandes */
-  .hero-title{
+  .columna-title{
     margin:0;
     font-family: "Playfair Display", serif;
     font-weight:700;
     color:var(--accent);
     text-transform:uppercase;
-    font-size:46px;             /* ajústalo para escala */
+    font-size:46px;
     letter-spacing:6px;
     line-height:1;
   }
 
-  /* Línea que va encima y debajo del recuadro */
   .hero-title .line-top,
   .hero-title .line-bottom{
     display:block;
     font-size:56px;
   }
 
-  /* Línea GLORIOSO con letras separadas */
   .spaced{
     display:block;
     font-size:48px;
     color:var(--rose);
-    letter-spacing:2px;   /* separación entre letras (ajusta) */
+    letter-spacing:2px;
     margin: 10px 0;
     font-weight:600;
   }
 
-  /* Texto descriptivo pequeño */
   .desc{
     margin-top:16px;
     color:#9b6f6f;
-    font-size:14px;
+    font-size:24px;
+    text-align: center;
     max-width:520px;
     line-height:1.6;
   }
 
-  /* columna derecha: imagen */
   .hero-right{
     overflow:hidden;
     border-radius:2px;
@@ -143,7 +144,6 @@
     display:block;
   }
 
-  /* responsive: 1 columna en pantallas pequeñas */
   @media (max-width:900px){
     .hero{grid-template-columns:1fr; padding:32px;}
     .hero-right{order:2; height:260px;}
@@ -167,29 +167,37 @@
     {% include 'navbar.html' %}
     <div >
         <div class="VideoInicio">
-            <video autoplay muted loop src="/static/vid/Contactanos!.mp4">
-            </video>
+            <video autoplay muted loop src="/static/vid/Contactanos!.mp4"></video>
         </div>
-        <section class="hero" aria-label="Hero - Dessert Sacré">
-            <div class="hero-left">
+
+        <section class="columna" aria-label="columna - Dessert Sacré">
+            <div class="columna-left">
                 <div class="text-wrap">
-                    <p class="subtitle">Bienvenidos a Dessert Sacré</p>
-                    <div class="highlight" aria-hidden="true">
-                        <h1 class="hero-title" aria-hidden="true">
+                  <div class="center-block">
+                    
+                    <p class="desc">Bienvenidos a Dessert Sacré</p>
+
+                    <!-- AQUI METÍ BOCADO DENTRO DEL RECUADRO -->
+                    <div class="recuadro" aria-hidden="true">
+                        <h1 class="columna-title" aria-hidden="true">
                             <span class="line-top">EL SABOR</span>
                             <span class="spaced">G L O R I O S O</span>
                             <span class="line-bottom">EN UN</span>
                         </h1>
+                        <span class="spaced" style="font-size:56px; color:var(--rose);">
+                            BOCADO
+                        </span>
                     </div>
-                    <h1 class="hero-title" style="color:var(--rose); font-size:56px; margin-top:6px;">BOCADO</h1>
+
                     <p class="desc">Donde el Pecado se Funde en Nuestros Glaseados</p>
+                  </div>
                 </div>
             </div>
+
             <div class="hero-right">
                 <img src="..." alt="Postres con frambuesas">
             </div>
         </section>
-    
-</body>
 
+</body>
 </html>
