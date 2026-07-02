@@ -25,9 +25,9 @@
   >
     {% include 'navbar.html' %}
 
-    <main class="carrito-page container mt-5">
+    <main class="carrito-page container mt-5 px-3 px-md-4">
       <div class="card shadow-sm p-4 mb-4">
-        <h1>Carrito de compras</h1>
+        <h1 class="display-6 fw-bold">Carrito de compras</h1>
         <p class="text-muted">Revisa tus productos antes de finalizar.</p>
 
         {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -102,7 +102,7 @@
                 class="btn btn-outline-secondary mb-2 mb-md-0"
                 >Seguir comprando</a
               >
-              <div class="text-end">
+              <div class="text-center text-md-end mt-3 mt-md-0">
                 <p class="h5">
                   Total:
                   <span id="cart-total">COP {{ "{:,.0f}".format(total) }}</span>

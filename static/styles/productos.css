@@ -106,26 +106,17 @@
 
 /* BARRA DE BÚSQUEDA */
 .search-bar {
-    display: block !important;
-    visibility: visible !important;
     max-width: 500px;
-    margin-left:10px;
-    margin-right:10px;
-    margin-top: 50px ;
-  }
+    width: 100%;
+    margin: 50px auto 0;
+    padding: 0 10px;
+    padding-top: 20px;
+}
 
-  .search-bar input {
-    width: 260%;
-    padding: 6px 6px; /* ancho y largo de la barra*/
+.search-bar input {
+    width: 100%;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-    outline: none;
-  }
-
-  .search-bar input:focus {
-    border-color: #d4a017;
-    box-shadow: 0 0 5px rgba(50, 0, 0, 0.68);
-  }
-
-  
+} 

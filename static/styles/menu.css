@@ -11,6 +11,9 @@
     color: white;
     text-decoration: none;
     padding: 10px;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }
 
 .espa{

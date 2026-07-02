@@ -29,7 +29,7 @@
     }
 
 .espa{
-  witdh:50px;
+  width:50px;
   height:100px;
 }
 
@@ -59,9 +59,10 @@
   border-radius: 12px;
 }
 
-.qty-input {
-  width: 80px;
-  margin: 0 auto;
+.qty-input{
+    max-width:80px;
+    min-width:55px;
+    margin:auto;
 }
 
 .empty-cart {
@@ -122,4 +123,101 @@
 
 .btn-warning:hover {
   background-color: #f7c466;
+}
+
+/* ===========================
+   Responsive Tablet
+=========================== */
+
+@media (max-width: 992px){
+
+.carrito-page{
+    margin-top:110px;
+}
+
+.qty-input{
+    width:70px;
+}
+
+.table{
+    font-size:.95rem;
+}
+
+}
+
+/* ===========================
+   Responsive Celular
+=========================== */
+
+@media (max-width:768px){
+
+.carrito-page{
+    margin-top:105px;
+    padding:0 10px;
+}
+
+.carrito-page h1{
+    font-size:1.8rem;
+    text-align:center;
+}
+
+.carrito-page p{
+    text-align:center;
+}
+
+.card{
+    padding:20px !important;
+}
+
+.table{
+    font-size:.88rem;
+}
+
+.table th,
+.table td{
+    white-space:nowrap;
+    vertical-align:middle;
+}
+
+.qty-input{
+    width:60px;
+}
+
+.btn{
+    width:100%;
+    margin-bottom:10px;
+}
+
+.text-end{
+    text-align:center !important;
+}
+
+}
+
+/* ===========================
+Celulares pequeños
+=========================== */
+
+@media (max-width:480px){
+
+.carrito-page{
+    margin-top:95px;
+}
+
+.card{
+    padding:15px !important;
+}
+
+.carrito-page h1{
+    font-size:1.5rem;
+}
+
+.table{
+    font-size:.80rem;
+}
+
+.qty-input{
+    width:55px;
+}
+
 }

@@ -15,20 +15,13 @@ body::-webkit-scrollbar{  /* Elimina la barra de desplazamiento */
 .menuN{zoom:0.88;} /* Ajusta el zoom para que se vea bien en pantallas grandes */
 
 body {
-    background: #FFF7EE;
+    background-image: url('/static/img/fondo1.jpeg');
+    /* Posición y tamaño de la imagen */
+    background-position: 45% 94%; /* posición personalizada */
+    background-size: cover;
+    background-position: center;
     font-family: "Georgia", serif;
     padding-top: 24px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-html {
-    height: 100%;
-}
-
-main {
-    flex: 1;
 }
 
 .Bespa{
@@ -248,7 +241,6 @@ body {
     width: auto;
     display: block;
 }
-
 
 /* --- REGLA RESPONSIVE --- */
 @media (max-width: 768px) {
