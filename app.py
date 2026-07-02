@@ -11,40 +11,38 @@ from datetime import datetime, timedelta
 from config import Config
 import traceback
 import os
-from dotenv import load_dotenv #pip install python-dotenv
 import stripe
 import smtplib
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer #pip install reportlab
 from reportlab.lib.styles import getSampleStyleSheet
 from flask import send_file
 import io
-load_dotenv()
+
 
 
 # ------------------------------------
 # CONFIG GENERAL
 # ------------------------------------
 app = Flask(__name__)
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 app.secret_key = "clave_super_secreta"
 app.config.from_object(Config)
 stripe.api_key = Config.STRIPE_SECRET_KEY
-
+"""
 DB_CONFIG = {
     'host': os.getenv('DB_HOST'),
     'dbname': os.getenv('DB_NAME'),
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD'),
     'port': os.getenv('DB_PORT')
-}
+}"""
 
-"""DB_CONFIG = {
+DB_CONFIG = {
     'host': "localhost", #host.docker.internal
     'dbname': "Dessert_Sacre",
     'user': "postgres",
     'password': "123456",
     'port': 5432
-}"""
+}
 
 def get_db_connection():
     try:

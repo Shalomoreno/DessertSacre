@@ -1,300 +1,306 @@
-:root{
-    --red: #a9133e;
-    --brown: #572727;
-    --pink: #f4c7c4;
-    --rose: #c86a6b;
-    --beige: #f8e8d4;
-    --accent: #d99b4d;
-    --green: #95ae78;
-  }
-
-body::-webkit-scrollbar{  /* Elimina la barra de desplazamiento */
-    display:none;
+:root {
+  --red: #a9133e;
+  --brown: #572727;
+  --pink: #f4c7c4;
+  --rose: #c86a6b;
+  --beige: #f8e8d4;
+  --accent: #d99b4d;
+  --green: #95ae78;
 }
 
-.menuN{zoom:0.88;} /* Ajusta el zoom para que se vea bien en pantallas grandes */
+body::-webkit-scrollbar {
+  /* Elimina la barra de desplazamiento */
+  display: none;
+}
+
+.menuN {
+  zoom: 0.88;
+} /* Ajusta el zoom para que se vea bien en pantallas grandes */
 
 body {
-    background-image: url('/static/img/fondo1.jpeg');
-    /* Posición y tamaño de la imagen */
-    background-position: 45% 94%; /* posición personalizada */
-    background-size: cover;
-    background-position: center;
-    font-family: "Georgia", serif;
-    padding-top: 24px;
+  background-image: url("/static/img/fondo1.jpeg");
+  /* Posición y tamaño de la imagen */
+  background-position: 45% 94%; /* posición personalizada */
+  background-size: cover;
+  background-position: center;
+  font-family: "Georgia", serif;
+  padding-top: 24px;
 }
 
-.Bespa{
-    zoom:0.88; /*zoom para footer*/
+.Bespa {
+  zoom: 0.88; /*zoom para footer*/
 }
-
 
 .contenedor {
-    width: 90%; /* Ocupa el 90% en pantallas chicas */
-    max-width: 350px; /* Pero no crece más de 350px */
-    margin: 50px auto;
-    padding: 30px;
-    background: #e6c298;
-    border-radius: 20px;
-    text-align: center;
+  width: 90%; /* Ocupa el 90% en pantallas chicas */
+  max-width: 350px; /* Pero no crece más de 350px */
+  margin: 50px auto;
+  padding: 30px;
+  background: #e6c298;
+  border-radius: 20px;
+  text-align: center;
 }
 
 .boton {
-    display: block;
-    margin: 15px auto;
-    padding: 12px;
-    width: 80%;
-    background: #FFF3C0;
-    border-radius: 20px;
-    text-decoration: none;
-    color: black;
-    font-weight:bold;
+  display: block;
+  margin: 15px auto;
+  padding: 12px;
+  width: 80%;
+  background: #fff3c0;
+  border-radius: 20px;
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
 }
 
-.imgF{
-    zoom:0.88;
-    background-image: url('/static/img/fondo1.jpeg');
-            /* Posición y tamaño de la imagen */
-    background-position: 45% 94%; /* posición personalizada */
-    background-size: cover;
-    background-position: center;
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
+.imgF {
+  zoom: 0.88;
+  background-image: url("/static/img/fondo1.jpeg");
+  /* Posición y tamaño de la imagen */
+  background-position: 45% 94%; /* posición personalizada */
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
 }
 
 .form {
-    display: flex; 
-    flex-wrap: wrap; /* Permite que los elementos bajen si no caben */
-    justify-content: center; /* Centra horizontalmente */
-    width: 90%;
-    max-width: 360px;
-    background: var(--beige);
-    padding: 25px;
-    border-radius: 20px;
-    margin: 50px auto;
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos bajen si no caben */
+  justify-content: center; /* Centra horizontalmente */
+  width: 90%;
+  max-width: 360px;
+  background: var(--beige);
+  padding: 25px;
+  border-radius: 20px;
+  margin: 50px auto;
 }
 
 .form:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
 
-        .form h2 {
-            font-family: 'Playfair Display', serif;
-            text-align: center;
-            font-weight: 800;
-            font-size: clamp(28px, 6vw, 36px);
-            color: var(--brown);
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-        }
+.form h2 {
+  font-family: "Playfair Display", serif;
+  text-align: center;
+  font-weight: 800;
+  font-size: clamp(28px, 6vw, 36px);
+  color: var(--brown);
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
 
-        .form input[type="text"]{
-            width: 100%;
-            padding: 14px 15px;
-            margin: 12px 0;
-            border: 1px solid var(--brown);
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border 0.3s, box-shadow 0.3s;
-        }
+.form input[type="text"] {
+  width: 100%;
+  padding: 14px 15px;
+  margin: 12px 0;
+  border: 1px solid var(--brown);
+  border-radius: 10px;
+  font-size: 16px;
+  transition:
+    border 0.3s,
+    box-shadow 0.3s;
+}
 
-        .form input:focus {
-            border-color: var(--red);
-            outline: none;
-            box-shadow: 0 0 5px rgba(169, 19, 62, 0.5); }
-        
-    .form button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 18px;
-            text-decoration: none;
-            background-color: var(--red);
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-    
-    .codi {
-        text-decoration: none;
-        color: var(--brown);
-    }
+.form input:focus {
+  border-color: var(--red);
+  outline: none;
+  box-shadow: 0 0 5px rgba(169, 19, 62, 0.5);
+}
 
+.form button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 18px;
+  text-decoration: none;
+  background-color: var(--red);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.codi {
+  text-decoration: none;
+  color: var(--brown);
+}
 
 nav {
-    background-color: var(--brown) !important;
+  background-color: var(--brown) !important;
 }
 
 .navbar-brand {
-    color: var(--beige)  !important;
+  color: var(--beige) !important;
 }
 
 .navbar-brand:hover {
-    color: var(--beige)  !important;
+  color: var(--beige) !important;
 }
 
 a.nav-link {
-    color: var(--beige) ;
+  color: var(--beige);
 }
 
-a.nav-link1 { /*título de Dessert Sacre*/
-    color: var(--beige) ;
-    font-size: 21px;
-    text-decoration: none;
+a.nav-link1 {
+  /*título de Dessert Sacre*/
+  color: var(--beige);
+  font-size: 21px;
+  text-decoration: none;
 }
 
 a.nav-link:hover {
-    color: var(--beige);
+  color: var(--beige);
 }
 
 body {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 
 .card {
-    padding: 20px;
-    margin-bottom: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .dropdown-menu {
-    background-color: rgb(141, 70, 55);
+  background-color: rgb(141, 70, 55);
 }
 
 .dropdown-item {
-    color: var(--beige);
+  color: var(--beige);
 }
 
 .dropdown-item:hover {
-    background-color:transparent !important;
-    color: white;
+  background-color: transparent !important;
+  color: white;
 }
 
 .nav-link.dropdown-toggle {
   color: var(--beige);
 }
 
-
 .nav-link.dropdown-toggle {
   color: var(--beige) !important;
 }
 
 .nav-link.dropdown-toggle:hover {
-    background-color: transparent;
-  color: white !important; 
+  background-color: transparent;
+  color: white !important;
 }
 
 /* FONDO DEL MODAL */
 .modal {
-    display: none; /* Flask lo puede manejar cambiando el display */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.45);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+  display: none; /* Flask lo puede manejar cambiando el display */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 
 /* CAJA DEL MODAL */
 .modal-box {
-    background: #fff;
-    padding: 25px;
-    width: 90%;
-    max-width: 350px;
-    border-radius: 20px;
-    text-align: center;
+  background: #fff;
+  padding: 25px;
+  width: 90%;
+  max-width: 350px;
+  border-radius: 20px;
+  text-align: center;
 }
 
 /* BOTONES */
 .btn-modal {
-    padding: 10px 15px;
-    margin: 10px 5px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
+  padding: 10px 15px;
+  margin: 10px 5px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-modal.principal {
-    background: #f1c5c2;
-    color: #000;
+  background: #f1c5c2;
+  color: #000;
 }
 
 .btn-modal.secundario {
-    background: #FFF3C0;
-    color: #000;
+  background: #fff3c0;
+  color: #000;
 }
 
 .logo-modal {
-    width: 120px;
-    margin-bottom: 10px;
+  width: 120px;
+  margin-bottom: 10px;
 }
 
 /* Define el tamaño del logo para que no sea gigante */
 .logo-navbar {
-    height: 40px; /* Tamaño ideal para computadoras */
-    width: auto;
-    display: block;
+  height: 40px; /* Tamaño ideal para computadoras */
+  width: auto;
+  display: block;
 }
 
 /* --- REGLA RESPONSIVE --- */
 @media (max-width: 768px) {
-    .logo-navbar {
-        height: 35px; /* Un poco más pequeño en móviles */
-    }
-    
-    .navbar-brand {
-        font-size: 1.1rem; /* El texto de la marca se ajusta sutilmente */
-    }
+  .logo-navbar {
+    height: 35px; /* Un poco más pequeño en móviles */
+  }
+
+  .navbar-brand {
+    font-size: 1.1rem; /* El texto de la marca se ajusta sutilmente */
+  }
 }
 
 @media (max-width: 480px) {
-    .contenedor, .form, .modal-box {
-        width: 95%; /* Aprovecha más el espacio en pantallas muy pequeñas */
-        padding: 15px;
-    }
-    
-    .logo-superpuesto {
-        left: 10px; /* Evita que el logo se salga en móviles */
-        height: 35px;
-    }
+  .contenedor,
+  .form,
+  .modal-box {
+    width: 95%; /* Aprovecha más el espacio en pantallas muy pequeñas */
+    padding: 15px;
+  }
 
-    .navbar-brand {
-        padding-left: 45px;
-        font-size: 0.9rem; /* Texto un poco más pequeño para que quepa */
-    }
+  .logo-superpuesto {
+    left: 10px; /* Evita que el logo se salga en móviles */
+    height: 35px;
+  }
+
+  .navbar-brand {
+    padding-left: 45px;
+    font-size: 0.9rem; /* Texto un poco más pequeño para que quepa */
+  }
 }
 
 /* 1. Cambiamos el color del borde del botón */
 .navbar-toggler {
-    border-color: var(--beige) !important;
-    padding: 4px 8px; /* Ajuste opcional para que se vea más estilizado */
+  border-color: var(--beige) !important;
+  padding: 4px 8px; /* Ajuste opcional para que se vea más estilizado */
 }
 
 /* 2. Inyectamos color beige a las rayitas (el icono) */
 .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23f8e8d4' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23f8e8d4' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
 }
 
 /* 3. Efecto visual cuando se hace clic (opcional) */
 .navbar-toggler:focus {
-    box-shadow: 0 0 0 0.25rem rgba(248, 232, 212, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(248, 232, 212, 0.25);
 }
 
 /* Evitar que el menú desplegado sea transparente en móvil */
 @media (max-width: 991px) {
-    .navbar-collapse {
-        background-color: var(--brown);
-        padding: 1rem;
-        border-radius: 0 0 15px 15px;
-    }
+  .navbar-collapse {
+    background-color: var(--brown);
+    padding: 1rem;
+    border-radius: 0 0 15px 15px;
+  }
 }
 
-.footer-col button{
-    color:white;
+.footer-col button {
+  color: white;
 }
