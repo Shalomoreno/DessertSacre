@@ -13,8 +13,22 @@ import traceback
 import os
 import stripe
 import smtplib
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer #pip install reportlab
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+    Image
+)
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.units import cm
+from reportlab.pdfbase.pdfmetrics import stringWidth
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from datetime import datetime
 from flask import send_file
 import io
 
@@ -826,6 +840,33 @@ def ver_mensaje(id):
 #====================================
 # RUTAS PARA REPORTES PDF DE ADMINISTRADOR
 #====================================
+COLOR_VINO = colors.HexColor("#572727")
+COLOR_BEIGE = colors.HexColor("#FDF5EA")
+COLOR_DORADO = colors.HexColor("#D99B4D")
+COLOR_GRIS = colors.HexColor("#777777")
+def pie_pagina(canvas, doc):
+
+    canvas.saveState()
+
+    canvas.setStrokeColor(COLOR_DORADO)
+    canvas.line(40,35,560,35)
+
+    canvas.setFillColor(COLOR_VINO)
+    canvas.setFont("Helvetica",9)
+
+    canvas.drawString(
+        40,
+        20,
+        "Dessert Sacré - Panel Administrativo"
+    )
+
+    canvas.drawRightString(
+        560,
+        20,
+        f"Página {doc.page}"
+    )
+
+    canvas.restoreState()
 
 @app.route("/admin/generar_reporte", methods=["POST"])
 def generar_reporte():
@@ -837,21 +878,77 @@ def generar_reporte():
 
     buffer = io.BytesIO()
 
-    doc = SimpleDocTemplate(buffer)
+    doc = SimpleDocTemplate(
+        buffer, 
+        pagesize=A4,# Tamaño A4 en puntos
+        rightMargin=25,
+        leftMargin=25,
+        topMargin=25,
+        bottomMargin=35) 
 
     styles = getSampleStyleSheet()
+    
+    titulo = ParagraphStyle(
+        "Titulo",
+        parent=styles["Heading1"],
+        alignment=TA_CENTER,
+        textColor=COLOR_VINO,
+        fontSize=22,
+        spaceAfter=8
+    )
+
+    subtitulo = ParagraphStyle(
+        "Subtitulo",
+        parent=styles["BodyText"],
+        alignment=TA_CENTER,
+        textColor=COLOR_DORADO,
+        fontSize=10
+    )
 
     contenido = []
+    logo = Image(
+    "static/img/logo.png",
+    width=2.8*cm,
+    height=2.8*cm
+    )
 
+    logo.hAlign = "CENTER"
+    contenido.append(logo)
     contenido.append(
-        Paragraph(
-            f"Reporte de {tipo.capitalize()}",
-            styles["Title"]
+    Paragraph(
+        "<b>DESSERT SACRÉ</b>",
+        titulo
         )
     )
 
-    contenido.append(Spacer(1, 20))
+    contenido.append(
+    Paragraph(
+        "Panel Administrativo",
+        subtitulo
+        )
+    )
 
+    contenido.append(Spacer(1,12))
+
+    contenido.append(
+    Paragraph(
+        f"<b>Reporte de {tipo.capitalize()}</b>",
+        titulo
+        )
+    )
+
+    contenido.append(
+    Paragraph(
+        datetime.now().strftime(
+            "Generado el %d/%m/%Y a las %H:%M"
+        ),
+        subtitulo
+        )
+    )
+
+    contenido.append(Spacer(1,20))
+
+    
     conn = get_db_connection()
     cur = conn.cursor(cursor_factory=RealDictCursor)
 
@@ -866,21 +963,48 @@ def generar_reporte():
 
         usuarios = cur.fetchall()
 
+        datos = [
+    ["ID","Nombre","Correo","Teléfono"]
+]
+
         for u in usuarios:
+            datos.append([
+            u["id"],
+            f"{u['primer_nombre']} {u['primer_apellido']}",
+            u["correo"],
+            u["telefono"]
+        ])
 
-            contenido.append(
-                Paragraph(
-                    f"""
-                    ID: {u['id']}<br/>
-                    Nombre: {u['primer_nombre']} {u['primer_apellido']}<br/>
-                    Correo: {u['correo']}<br/>
-                    Teléfono: {u['telefono']}
-                    """,
-                    styles["BodyText"]
-                )
-            )
+        contenido.append(
+            Paragraph(
+            f"<b>Total de usuarios:</b> {len(usuarios)}",
+            styles["BodyText"]
+        )
+)
 
-            contenido.append(Spacer(1,10))
+        contenido.append(Spacer(1,10))
+
+        tabla = Table(
+        datos,
+        repeatRows=1,
+        colWidths=[40,120,220,100]
+        )
+
+        tabla.setStyle(TableStyle([
+    ("BACKGROUND",(0,0),(-1,0),COLOR_VINO),
+    ("TEXTCOLOR",(0,0),(-1,0),colors.white),
+    ("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),
+    ("FONTSIZE",(0,0),(-1,-1),9),
+    ("GRID",(0,0),(-1,-1),0.5,COLOR_DORADO),
+    ("BACKGROUND",(0,1),(-1,-1),COLOR_BEIGE),
+    ("ROWBACKGROUNDS",(0,1),(-1,-1),
+        [COLOR_BEIGE,colors.white]),
+    ("BOTTOMPADDING",(0,0),(-1,0),8),
+    ("TOPPADDING",(0,1),(-1,-1),7),
+
+]))
+
+        contenido.append(tabla)
 
     # MENSAJES
     elif tipo == "mensajes":
@@ -893,71 +1017,125 @@ def generar_reporte():
 
         mensajes = cur.fetchall()
 
+        datos = [
+    ["Nombre","Correo","Mensaje","Fecha"]
+]
+        datos=[["Nombre","Correo","Mensaje","Fecha"]]
+
         for m in mensajes:
+            datos.append([
+            f"{m['nombre']} {m['apellido']}",
+            m["email"],
+            m["mensaje"],
+            str(m["fecha"])
+        ])
 
-            contenido.append(
-                Paragraph(
-                    f"""
-                    Nombre: {m['nombre']} {m['apellido']}<br/>
-                    Correo: {m['email']}<br/>
-                    Mensaje: {m['mensaje']}<br/>
-                    Fecha: {m['fecha']}
-                    """,
-                    styles["BodyText"]
-                )
-            )
+        tabla=Table(
+        datos,
+        repeatRows=1,
+        colWidths=[90,130,220,90]
+)
 
-            contenido.append(Spacer(1,10))
+        tabla.setStyle(TableStyle([
+("BACKGROUND",(0,0),(-1,0),COLOR_VINO),
+("TEXTCOLOR",(0,0),(-1,0),colors.white),
+("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),
+("GRID",(0,0),(-1,-1),0.5,COLOR_DORADO),
+("BACKGROUND",(0,1),(-1,-1),COLOR_BEIGE),
+("ROWBACKGROUNDS",(0,1),(-1,-1),
+[COLOR_BEIGE,colors.white]),
+("FONTSIZE",(0,0),(-1,-1),8),
+]))
+
+        contenido.append(tabla)
+    
 
     # PEDIDOS (ahora desde la base de datos)
     elif tipo == "pedidos":
-
         pedidos_reporte = obtener_pedidos()
 
-        for ref, p in pedidos_reporte.items():
+        datos=[[
+"Referencia",
+"Cliente",
+"Productos",
+"Total",
+"Estado"
+]]
 
-            contenido.append(
-                Paragraph(
-                    f"""
-                    Referencia: {ref}<br/>
-                    Cliente: {p['nombre']}<br/>
-                    Correo: {p['email']}<br/>
-                    Productos: {', '.join(p['productos'])}<br/>
-                    Total: ${p['total']:,.0f}<br/>
-                    Método: {p['metodo']}<br/>
-                    Estado: {p['estado']}<br/>
-                    Fecha: {p['fecha']}
-                    """,
-                    styles["BodyText"]
-                )
-            )
+        for ref,p in pedidos_reporte.items():
 
-            contenido.append(Spacer(1,10))
+            datos.append([
+        ref,
+        p["nombre"],
+        ", ".join(p["productos"]),
+        f"${p['total']:,.0f}",
+        p["estado"]
+    ])
+
+        tabla=Table(
+    datos,
+    repeatRows=1,
+    colWidths=[80,90,210,60,70]
+)
+
+        tabla.setStyle(TableStyle([
+("BACKGROUND",(0,0),(-1,0),COLOR_VINO),
+("TEXTCOLOR",(0,0),(-1,0),colors.white),
+("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),
+("GRID",(0,0),(-1,-1),0.5,COLOR_DORADO),
+("BACKGROUND",(0,1),(-1,-1),COLOR_BEIGE),
+("ROWBACKGROUNDS",(0,1),(-1,-1),
+[COLOR_BEIGE,colors.white]),
+("FONTSIZE",(0,0),(-1,-1),8),
+]))
+
+        contenido.append(tabla)
 
     # CALIFICACIONES
     elif tipo == "calificaciones":
+        datos=[[
+            "Cliente",
+            "Producto",
+            "⭐",
+            "Comentario",
+            "Fecha"
+]]
 
         for c in obtener_calificaciones():
 
-            contenido.append(
-                Paragraph(
-                    f"""
-                    Cliente: {c['cliente']}<br/>
-                    Producto: {c['producto']}<br/>
-                    Estrellas: {c['estrellas']}<br/>
-                    Comentario: {c['comentario']}<br/>
-                    Fecha: {c['fecha']}
-                    """,
-                    styles["BodyText"]
-                )
-            )
+            datos.append([
+        c["cliente"],
+        c["producto"],
+        str(c["estrellas"]),
+        c["comentario"],
+        str(c["fecha"])
+    ])
 
-            contenido.append(Spacer(1,10))
+        tabla=Table(
+    datos,
+    repeatRows=1,
+    colWidths=[90,120,40,200,80]
+)
+
+        tabla.setStyle(TableStyle([
+("BACKGROUND",(0,0),(-1,0),COLOR_VINO),
+("TEXTCOLOR",(0,0),(-1,0),colors.white),
+("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),
+("GRID",(0,0),(-1,-1),0.5,COLOR_DORADO),
+("BACKGROUND",(0,1),(-1,-1),COLOR_BEIGE),
+("ROWBACKGROUNDS",(0,1),(-1,-1),
+[COLOR_BEIGE,colors.white]),
+("FONTSIZE",(0,0),(-1,-1),8),
+]))
+
+        contenido.append(tabla)
 
     cur.close()
     conn.close()
 
-    doc.build(contenido)
+    doc.build(contenido, onFirstPage=pie_pagina,
+    onLaterPages=pie_pagina
+)
 
     buffer.seek(0)
 
@@ -968,7 +1146,99 @@ def generar_reporte():
         mimetype="application/pdf"
     )
 
-    
+
+
+# ====================================
+# RUTAS DEL PANEL DE UPDATE
+# ====================================
+@app.route("/admin/update")
+def admin_update():
+
+    if not session.get("admin"):
+        return redirect("/login")
+
+    return render_template("admin/update.html")
+
+
+# Ruta para obtener los productos de una categoría
+@app.route("/admin/update/<categoria>")
+def obtener_productos_categoria(categoria):
+
+    if not session.get("admin"):
+        return redirect("/login")
+
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    cur.execute("""
+        SELECT
+            id_producto,
+            nombre,
+            precio
+        FROM productos
+        WHERE categoria=%s
+        ORDER BY nombre
+    """,(categoria,))
+
+    productos = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return jsonify(productos)
+
+
+# Ruta para guardar los cambios
+@app.route("/admin/update/precios", methods=["POST"])
+def actualizar_precios():
+
+    if not session.get("admin"):
+        return jsonify({"ok":False})
+
+    datos=request.json
+
+    conn=get_db_connection()
+    cur=conn.cursor()
+
+    for producto in datos:
+
+        cur.execute("""
+            UPDATE productos
+            SET precio=%s
+            WHERE id_producto=%s
+        """,(
+            producto["precio"],
+            producto["id_producto"]
+        ))
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return jsonify({
+        "ok":True,
+        "mensaje":"Precios actualizados correctamente."
+    })
+
+
+# Ruta para mostar la pagina de una categotía
+@app.route("/admin/update/categoria/<categoria>")
+def update_categoria(categoria):
+
+    if not session.get("admin"):
+        return redirect("/login")
+
+    return render_template(
+        "admin/update_categoria.html",
+        categoria=categoria
+    )
+
+
+
+
+
+
 # ====================================
 # FUNCIONES Y RUTAS DEL CARRITO DE COMPRAS
 # ====================================
