@@ -1,0 +1,46 @@
+{% include "admin/navbar_izq.html" %}
+
+<div class="container-admin-top">
+    {% include "admin/navbar-top.html" %}
+</div>
+
+<div class="container">
+
+    <div class="page-header">
+
+        <div class="volver-update">
+            <a href="{{ url_for('admin_update') }}" class="btn-volver">Volver</a>
+        </div>
+
+        <div class="titulo-update">
+            <h1>{{ categoria|capitalize }}</h1>
+            <button id="btnGuardar" disabled class="btn-generar">
+                Guardar cambios
+            </button>
+        </div>
+
+        <div id="contenedorMensajes"></div>
+
+    </div>
+
+    <div class="card">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody id="tablaProductos">
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    const idCategoria = {{ id_categoria }}; <!-- NO ME LO MUEVAN - GRACIAS  -->
+</script>
+
+<script src="{{ url_for('static', filename='js/update.js') }}"></script>

@@ -7,11 +7,7 @@
   <title>Panel Admin | Dessert Sacré</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/admin/admin.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/admin/navbar-top.css') }}">
-   <link
-      rel="icon"
-      type="image/x-icon"
-      href="{{ url_for('static', filename='img/logo_llamativo.ico') }}"
-    />
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo_llamativo.ico') }}" />
 </head>
 
 <body>
@@ -20,7 +16,7 @@
     {% include '/admin/navbar-top.html' %}
   </div>
 
-
+  
   <div class="container">
     <!-- PANEL ----------------------------------------------------------->
     <div id="panel" class="tab-content activo">
@@ -408,24 +404,28 @@
     /* FUNCIÓN PARA CAMBIAR DE PESTAÑA ------------------------------------*/
     function mostrarTab(tabId) {
 
-      /* Oculta todas las secciones */
-      document.querySelectorAll(".tab-content").forEach(function (tab) {
+      document.querySelectorAll(".tab-content").forEach(tab => {
         tab.classList.remove("activo");
       });
 
-      /* Quita el estilo activo de todos los links */
-      document.querySelectorAll(".navbar-links a").forEach(function (link) {
+      document.querySelectorAll(".navbar-links a").forEach(link => {
         link.classList.remove("activo");
       });
 
-      /* Muestra la sección seleccionada */
-      document.getElementById(tabId).classList.add("activo");
+      const contenido = document.getElementById(tabId);
 
-      /* Marca el link como activo */
-      const linkActivo = document.getElementById("tab-" + tabId);
-      if (linkActivo) {
-        linkActivo.classList.add("activo");
+      if (!contenido) {
+        return;
       }
+
+      contenido.classList.add("activo");
+
+      const link = document.getElementById("tab-" + tabId);
+
+      if (link) {
+        link.classList.add("activo");
+      }
+
     }
   </script>
 
@@ -454,11 +454,11 @@
       });
 
     });
-    
+
     function toggleMenu() {
-  const navbar = document.querySelector('.navbar');
-  navbar.classList.toggle('open');
-}
+      const navbar = document.querySelector('.navbar');
+      navbar.classList.toggle('open');
+    }
   </script>
 
 </body>

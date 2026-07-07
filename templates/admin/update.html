@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Update | Dessert Sacré</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/navbar-top.css') }}">
+</head>
+
+<body>
+
+{% include "admin/navbar_izq.html" %}
+
+<div class="container-admin-top">
+    {% include "admin/navbar-top.html" %}
+</div>
+
+<div class="container">
+
+    <div class="page-header">
+        <h1>Actualizar menú</h1>
+        <p>Actualiza los precios del menú Dessert Sacré.</p>
+    </div>
+
+    <div class="categorias-grid">
+
+    <a href="/admin/update/panaderia" class="categoria-card">
+        <img src="{{ url_for('static', filename='img/panaderia1.jpeg') }}" alt="Panadería">
+        <h3>Panadería</h3>
+        <span>Actualizar precios</span>
+    </a>
+
+    <a href="/admin/update/pasteleria" class="categoria-card">
+        <img src="{{ url_for('static', filename='img/pasteleria1.jpeg') }}" alt="Pastelería">
+        <h3>Pastelería</h3>
+        <span>Actualizar precios</span>
+    </a>
+
+    <a href="/admin/update/reposteria" class="categoria-card">
+        <img src="{{ url_for('static', filename='img/reposteria1.jpeg') }}" alt="Repostería">
+        <h3>Repostería</h3>
+        <span>Actualizar precios</span>
+    </a>
+
+    <a href="/admin/update/bebidas" class="categoria-card">
+        <img src="{{ url_for('static', filename='img/bebidas1.jpeg') }}" alt="Bebidas">
+        <h3>Bebidas</h3>
+        <span>Actualizar precios</span>
+    </a>
+
+</div>
+
+</div>
+
+
+</body>

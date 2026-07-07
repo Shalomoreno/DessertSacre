@@ -29,7 +29,7 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from datetime import datetime
-from flask import send_file
+from flask import send_file, abort
 import io
 
 
@@ -593,7 +593,8 @@ def admin():
         total_ventas=total_ventas, # Pasa el total de ventas
         calificaciones=obtener_calificaciones(), # Pasa todas las calificaciones (desde la BD)
         mensajes=mensajes, # Pasa los mensajes obtenidos de la BD
-        now=datetime.now().strftime("%d %b %Y")   # Fecha actual para mostrar en el dashboard
+        now=datetime.now().strftime("%d %b %Y"),   # Fecha actual para mostrar en el dashboard
+
     )
 
 @app.route("/admin/pedidos")  # Ruta de pedidos en admin
@@ -1160,50 +1161,79 @@ def admin_update():
     return render_template("admin/update.html")
 
 
-# Ruta para obtener los productos de una categoría
-@app.route("/admin/update/<categoria>")
-def obtener_productos_categoria(categoria):
+# Ruta para obtner las categorias
+@app.route("/admin/update/categorias")
+def obtener_categorias():
 
     if not session.get("admin"):
-        return redirect("/login")
+        return jsonify([])
 
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    conexion = get_db_connection()
+    cursor = conexion.cursor(cursor_factory=RealDictCursor)
 
-    cur.execute("""
+    cursor.execute("""
+        SELECT
+            id_categoria,
+            nombre
+        FROM categoria
+        ORDER BY nom_categoria
+    """)
+
+    categorias = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+
+    return jsonify(categorias)
+
+
+# Ruta para los productos de una categoría
+@app.route("/admin/update/productos/<int:id_categoria>")
+def obtener_productos_categoria(id_categoria):
+
+    if not session.get("admin"):
+        return jsonify([])
+
+    conexion = get_db_connection()
+    cursor = conexion.cursor(cursor_factory=RealDictCursor)
+
+    cursor.execute("""
         SELECT
             id_producto,
             nombre,
             precio
-        FROM productos
-        WHERE categoria=%s
+        FROM producto
+        WHERE id_categoria=%s
         ORDER BY nombre
-    """,(categoria,))
+    """,(id_categoria,))
 
-    productos = cur.fetchall()
+    productos = cursor.fetchall()
 
-    cur.close()
-    conn.close()
+    cursor.close()
+    conexion.close()
 
     return jsonify(productos)
 
 
-# Ruta para guardar los cambios
+
+# Ruta para guardar precios
 @app.route("/admin/update/precios", methods=["POST"])
 def actualizar_precios():
 
     if not session.get("admin"):
-        return jsonify({"ok":False})
+        return jsonify({
+            "ok": False
+        })
 
-    datos=request.json
+    datos = request.json
 
-    conn=get_db_connection()
-    cur=conn.cursor()
+    conexion = get_db_connection()
+    cursor = conexion.cursor()
 
     for producto in datos:
 
-        cur.execute("""
-            UPDATE productos
+        cursor.execute("""
+            UPDATE producto
             SET precio=%s
             WHERE id_producto=%s
         """,(
@@ -1211,30 +1241,44 @@ def actualizar_precios():
             producto["id_producto"]
         ))
 
-    conn.commit()
+    conexion.commit()
 
-    cur.close()
-    conn.close()
+    cursor.close()
+    conexion.close()
 
     return jsonify({
-        "ok":True,
-        "mensaje":"Precios actualizados correctamente."
+        "ok": True,
+        "mensaje": "Precios actualizados correctamente."
     })
 
-
-# Ruta para mostar la pagina de una categotía
-@app.route("/admin/update/categoria/<categoria>")
+@app.route("/admin/update/<categoria>")
 def update_categoria(categoria):
 
     if not session.get("admin"):
         return redirect("/login")
 
+    conexion = get_db_connection()
+    cursor = conexion.cursor(cursor_factory=RealDictCursor)
+
+    cursor.execute("""
+        SELECT id_categoria, nom_categoria
+        FROM categoria
+        WHERE LOWER(nom_categoria)=LOWER(%s)
+    """, (categoria,))
+
+    categoria_bd = cursor.fetchone()
+
+    cursor.close()
+    conexion.close()
+
+    if not categoria_bd:
+        abort(404)
+
     return render_template(
         "admin/update_categoria.html",
-        categoria=categoria
+        categoria=categoria_bd["nom_categoria"],
+        id_categoria=categoria_bd["id_categoria"]
     )
-
-
 
 
 
@@ -1387,6 +1431,9 @@ def inject_cart_count():
     cart = session.get("carrito", [])
     cart_count = sum(item.get("qty", 0) for item in cart)
     return dict(cart_count=cart_count)
+
+
+
 # ====================================
 # PASARELA DE PAGOS CON STRIPE ELEMENTS
 # ====================================
