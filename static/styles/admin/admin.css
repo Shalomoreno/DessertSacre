@@ -6,6 +6,9 @@
   display: block;
 }
 
+.zoom{
+  zoom:0.88;
+}
 
 .navbar-brand-text-admin {
   font-family: "Georgia", serif;
@@ -33,13 +36,12 @@
   left: 0;
   width: 220px;
   /* ancho del navbar */
-  height: 95vh;
+  height: 100vh;
   /* toda la altura */
   background: #572727;
   display: flex;
   flex-direction: column;
   /* elementos apilados verticalmente */
-  padding: 24px 0;
   gap: 0;
   border-bottom: none;
   /* quita el borde inferior */
@@ -168,6 +170,7 @@ body::-webkit-scrollbar {
   /* mismo ancho que el navbar */
   max-width: calc(100% - 220px);
   padding: 2rem 2.5rem 4rem;
+  zoom:0.90;
 }
 
 /* ── BODY — quita el padding-top ── */

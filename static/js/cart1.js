@@ -19,6 +19,53 @@ function updateCartStatus(message, type = "success") {
     </div>`;
 }
 
+/* mensaje de error, mismo tipo que en carrito*/
+
+function showOverlayMessage(message, type = "success") {
+  // Elimina un mensaje anterior si existe
+  document.getElementById("overlay-mensaje")?.remove();
+  document.getElementById("overlay-fondo")?.remove();
+
+  // Fondo oscuro
+  const fondo = document.createElement("div");
+  fondo.id = "overlay-fondo";
+  fondo.style.position = "fixed";
+  fondo.style.top = "0";
+  fondo.style.left = "0";
+  fondo.style.width = "100%";
+  fondo.style.height = "100%";
+  fondo.style.backgroundColor = "rgba(0,0,0,0.5)";
+  fondo.style.zIndex = "9998";
+
+  // Caja centrada
+  const contenedor = document.createElement("div");
+  contenedor.id = "overlay-mensaje";
+  contenedor.style.position = "fixed";
+  contenedor.style.top = "50%";
+  contenedor.style.left = "50%";
+  contenedor.style.transform = "translate(-50%, -50%)";
+  contenedor.style.zIndex = "9999";
+  contenedor.style.width = "90%";
+  contenedor.style.maxWidth = "400px";
+
+  contenedor.innerHTML = `
+    <div class="alert alert-${type} alert-dismissible fade show text-center shadow" role="alert">
+      ${message}
+      <button type="button" class="btn-close"></button>
+    </div>`;
+
+  document.body.appendChild(fondo);
+  document.body.appendChild(contenedor);
+
+  const cerrar = () => {
+    contenedor.remove();
+    fondo.remove();
+  };
+
+  contenedor.querySelector(".btn-close").addEventListener("click", cerrar);
+  fondo.addEventListener("click", cerrar);
+}
+
 /* ══════════════════════════════════════════
    CARGAR CANTIDAD DEL CARRITO DESDE EL SERVER
 ══════════════════════════════════════════ */
@@ -211,11 +258,17 @@ function initEstrellas() {
         const data = await res.json();
 
         if (data.success) {
-          alert(
+          showOverlayMessage(
             `¡Gracias por calificar ${producto} con ${seleccionada} estrella(s)!`,
+            "success",
           );
         } else if (data.error === "No autenticado") {
-          alert("Debes iniciar sesión para calificar.");
+          showOverlayMessage("Debes iniciar sesión para calificar.", "warning");
+        } else {
+          showOverlayMessage(
+            data.error || "No se pudo registrar la calificación.",
+            "danger",
+          );
         }
       });
     });

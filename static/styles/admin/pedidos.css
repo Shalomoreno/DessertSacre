@@ -6,6 +6,10 @@ body {
 
 body::-webkit-scrollbar { display: none; }
 
+.zoom{
+  zoom:0.88;
+}
+
 /* ── NAVBAR ── */
 .ds-navbar {
     position: fixed;

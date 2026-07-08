@@ -214,3 +214,25 @@ textarea:focus { border-color: #bbb; background: #fff; }
   font-size: 13px;
   color: #777;
 }
+
+.input-editable {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.btn-guardar-perfil {
+  margin-top: 15px;
+  background: #5a1f1f;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-guardar-perfil:hover {
+  background: #3e1515;
+}

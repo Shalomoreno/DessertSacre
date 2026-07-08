@@ -39,55 +39,111 @@
       </div>
 
       <!-- DATOS PERSONALES -->
-      <div class="card">
-        <h3>Datos personales</h3>
-        <div class="datos-grid">
-          <div class="dato">
-            <span class="label">Correo</span>
-            <span class="valor">{{ usuario.email }}</span>
-          </div>
-          <div class="dato">
-            <span class="label">Teléfono</span>
-            <span class="valor">{{ usuario.telefono or '—' }}</span>
-          </div>
-          <div class="dato">
-            <span class="label">Dirección</span>
-            <span class="valor">{{ usuario.direccion or '—' }}</span>
-          </div>
-        </div>
-      </div>
+<div class="card">
+  <h3>Datos personales</h3>
 
-      <!-- HISTORIAL DE PEDIDOS -->
-      <div class="card">
-        <h3>Historial de pedidos</h3>
-        {% if pedidos %}
-        <table class="tabla-pedidos">
-          <thead>
-            <tr>
-              <th>Referencia</th>
-              <th>Fecha</th>
-              <th>Método</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for ref, p in pedidos.items() %}
-            <tr>
-              <td><code>{{ p.productos | join(", ") }}</code></td>
-              <!-- join quita los corchetes de la lista-->
-              <td>{{ p.fecha }}</td>
-              <td>{{ p.metodo | capitalize }}</td>
-              <td>${{ '{:,.0f}'.format(p.total) }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-        <p class="vacio">Aún no tienes pedidos registrados.</p>
-        {% endif %}
+  <div id="perfil-status"></div>
+
+  <form id="form-perfil">
+    <div class="datos-grid">
+      <div class="dato">
+        <span class="label">Correo</span>
+        <span class="valor">{{ usuario.email }}</span>
+      </div>
+      <div class="dato">
+        <span class="label">Teléfono</span>
+        <input
+          type="text"
+          name="telefono"
+          class="input-editable"
+          value="{{ usuario.telefono or '' }}"
+        />
+      </div>
+      <div class="dato">
+        <span class="label">Dirección</span>
+        <input
+          type="text"
+          name="direccion"
+          class="input-editable"
+          value="{{ usuario.direccion or '' }}"
+        />
       </div>
     </div>
+    <button type="submit" id="btn-guardar-perfil" class="btn-guardar-perfil" style="display: none;">Guardar cambios</button>
+  </form>
+</div>
+
+<script>
+  const formPerfil   = document.getElementById("form-perfil");
+  const btnGuardar   = document.getElementById("btn-guardar-perfil");
+  const inputs       = formPerfil.querySelectorAll(".input-editable");
+
+  // Guarda los valores originales para poder comparar
+  const valoresOriginales = {};
+  inputs.forEach((input) => {
+    valoresOriginales[input.name] = input.value;
+  });
+
+  function hayCambios() {
+    return Array.from(inputs).some(
+      (input) => input.value.trim() !== valoresOriginales[input.name].trim()
+    );
+  }
+
+  function actualizarVisibilidadBoton() {
+    btnGuardar.style.display = hayCambios() ? "inline-block" : "none";
+  }
+
+  inputs.forEach((input) => {
+    input.addEventListener("input", actualizarVisibilidadBoton);
+  });
+
+  formPerfil.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const telefono = e.target.telefono.value.trim();
+    const direccion = e.target.direccion.value.trim();
+    const status = document.getElementById("perfil-status");
+
+    try {
+      const res = await fetch("/api/actualizar_perfil", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telefono, direccion }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        status.innerHTML = `
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Datos actualizados correctamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>`;
+
+        // Actualiza los valores "originales" con los recién guardados
+        // y oculta el botón de nuevo
+        valoresOriginales.telefono = telefono;
+        valoresOriginales.direccion = direccion;
+        actualizarVisibilidadBoton();
+      } else {
+        status.innerHTML = `
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ${data.error || "No se pudo actualizar."}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>`;
+      }
+    } catch {
+      status.innerHTML = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          Error de red al actualizar.
+        </div>`;
+    }
+  });
+</script>
 
     {% include 'users/footer1.html' %}
   </body>
+
 </html>
+
+

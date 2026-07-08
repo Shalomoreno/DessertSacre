@@ -41,14 +41,7 @@ app = Flask(__name__)
 app.secret_key = "clave_super_secreta"
 app.config.from_object(Config)
 stripe.api_key = Config.STRIPE_SECRET_KEY
-"""
-DB_CONFIG = {
-    'host': os.getenv('DB_HOST'),
-    'dbname': os.getenv('DB_NAME'),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'port': os.getenv('DB_PORT')
-}"""
+
 
 DB_CONFIG = {
     'host': "localhost", #host.docker.internal

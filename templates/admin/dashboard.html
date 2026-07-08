@@ -427,6 +427,29 @@
       }
 
     }
+
+    /* NAVEGACIÓN DESDE CUALQUIER PÁGINA -----------------------------------
+       Si ya estamos en el panel (esta página), cambiamos de pestaña sin
+       recargar. Si estamos en otra página (ej: /admin/update), dejamos
+       que el link navegue normalmente a /admin#tabId. */
+    function irATab(event, tabId) {
+      if (document.getElementById(tabId)) {
+        event.preventDefault();
+        mostrarTab(tabId);
+        history.replaceState(null, '', '#' + tabId);
+        return false;
+      }
+      return true;
+    }
+
+    /* Al cargar el panel, si la URL trae un hash (ej: /admin#pedidos),
+       abrimos esa pestaña automáticamente. */
+    document.addEventListener("DOMContentLoaded", function () {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        mostrarTab(hash);
+      }
+    });
   </script>
 
   <script>
@@ -464,3 +487,4 @@
 </body>
 
 </html>
+    
